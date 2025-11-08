@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LifeFlow - Minimalist GTD Task Planner">
+    <meta name="theme-color" content="#3b82f6">
+    <title>LifeFlow - GTD Task Planner</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main App Container -->
+    <div id="app" class="app">
+        
+        <!-- Desktop Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">LifeFlow</h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-view="inbox">
+                    <span class="nav-icon">📥</span>
+                    <span class="nav-label">Inbox</span>
+                    <span class="nav-count" data-count="inbox">0</span>
+                </button>
+                <button class="nav-item" data-view="today">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Today</span>
+                    <span class="nav-count" data-count="today">0</span>
+                </button>
+                <button class="nav-item" data-view="week">
+                    <span class="nav-icon">📆</span>
+                    <span class="nav-label">This Week</span>
+                    <span class="nav-count" data-count="week">0</span>
+                </button>
+                <button class="nav-item" data-view="month">
+                    <span class="nav-icon">🗓️</span>
+                    <span class="nav-label">This Month</span>
+                    <span class="nav-count" data-count="month">0</span>
+                </button>
+                <button class="nav-item" data-view="projects">
+                    <span class="nav-icon">📂</span>
+                    <span class="nav-label">Projects</span>
+                    <span class="nav-count" data-count="projects">0</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button id="darkModeToggle" class="icon-btn" title="Toggle Dark Mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button id="exportBtn" class="icon-btn" title="Export Data">
+                    <span>💾</span>
+                </button>
+                <button id="helpBtn" class="icon-btn" title="Keyboard Shortcuts (?)">
+                    <span>❓</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content">
+            
+            <!-- Quick Add Bar -->
+            <div class="quick-add-bar">
+                <div class="quick-add-container">
+                    <input 
+                        type="text" 
+                        id="quickAddInput" 
+                        class="quick-add-input" 
+                        placeholder="Add a new task... (Press 'n' to focus)"
+                        aria-label="Quick add task"
+                    >
+                    <button id="voiceInputBtn" class="voice-btn" title="Voice Input" aria-label="Voice input">
+                        🎤
+                    </button>
+                    <button id="quickAddBtn" class="quick-add-btn" aria-label="Add task">
+                        Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search tasks... (Press '/' to focus)"
+                    aria-label="Search tasks"
+                >
+            </div>
+            
+            <!-- View Title -->
+            <div class="view-header">
+                <h2 id="viewTitle" class="view-title">Inbox</h2>
+                <div class="view-actions">
+                    <button id="viewOptionsBtn" class="icon-btn" title="View Options">
+                        ⚙️
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Task List View -->
+            <div id="taskListView" class="task-list-view">
+                <div id="taskList" class="task-list">
+                    <!-- Tasks will be rendered here -->
+                </div>
+            </div>
+            
+            <!-- Kanban Board View -->
+            <div id="kanbanView" class="kanban-view hidden">
+                <div class="kanban-board">
+                    <div class="kanban-column" data-status="todo">
+                        <h3 class="kanban-column-title">To Do</h3>
+                        <div class="kanban-column-content" data-droppable="todo">
+                            <!-- Tasks will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="kanban-column" data-status="doing">
+                        <h3 class="kanban-column-title">Doing</h3>
+                        <div class="kanban-column-content" data-droppable="doing">
+                            <!-- Tasks will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="kanban-column" data-status="done">
+                        <h3 class="kanban-column-title">Done</h3>
+                        <div class="kanban-column-content" data-droppable="done">
+                            <!-- Tasks will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Projects View -->
+            <div id="projectsView" class="projects-view hidden">
+                <div class="projects-header">
+                    <button id="newProjectBtn" class="btn btn-primary">+ New Project</button>
+                </div>
+                <div id="projectsList" class="projects-list">
+                    <!-- Projects will be rendered here -->
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-state-icon">📝</div>
+                <h3 class="empty-state-title">No tasks yet</h3>
+                <p class="empty-state-text">Add your first task to get started!</p>
+            </div>
+            
+        </main>
+        
+        <!-- Mobile Bottom Navigation -->
+        <nav id="mobileNav" class="mobile-nav">
+            <button class="mobile-nav-item active" data-view="inbox">
+                <span class="mobile-nav-icon">📥</span>
+                <span class="mobile-nav-label">Home</span>
+            </button>
+            <button class="mobile-nav-item" data-view="today">
+                <span class="mobile-nav-icon">📅</span>
+                <span class="mobile-nav-label">Today</span>
+            </button>
+            <button class="mobile-nav-item" id="mobileAddBtn">
+                <span class="mobile-nav-icon mobile-add-icon">+</span>
+                <span class="mobile-nav-label">Add</span>
+            </button>
+            <button class="mobile-nav-item" data-view="projects">
+                <span class="mobile-nav-icon">📂</span>
+                <span class="mobile-nav-label">Projects</span>
+            </button>
+        </nav>
+        
+    </div>
+    
+    <!-- Task Detail Modal -->
+    <div id="taskModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+        <div class="modal-overlay" data-close-modal></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="taskModalTitle" class="modal-title">Task Details</h3>
+                <button class="modal-close" data-close-modal aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <input type="hidden" id="taskId">
+                    
+                    <div class="form-group">
+                        <label for="taskTitle" class="form-label">Title *</label>
+                        <input 
+                            type="text" 
+                            id="taskTitle" 
+                            class="form-input" 
+                            required 
+                            placeholder="What needs to be done?"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskDesc" class="form-label">Description</label>
+                        <textarea 
+                            id="taskDesc" 
+                            class="form-textarea" 
+                            rows="3" 
+                            placeholder="Add more details..."
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskDue" class="form-label">Due Date</label>
+                            <input type="date" id="taskDue" class="form-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="taskProject" class="form-label">Project</label>
+                            <select id="taskProject" class="form-select">
+                                <option value="">No Project</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskTags" class="form-label">Tags</label>
+                        <input 
+                            type="text" 
+                            id="taskTags" 
+                            class="form-input" 
+                            placeholder="Comma-separated tags"
+                        >
+                        <div id="tagsList" class="tags-list"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subtasks</label>
+                        <div id="subtasksList" class="subtasks-list">
+                            <!-- Subtasks will be rendered here -->
+                        </div>
+                        <button type="button" id="addSubtaskBtn" class="btn btn-secondary btn-sm">
+                            + Add Subtask
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="taskRecurring">
+                            <span>Recurring Task</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+        <div class="modal-overlay" data-close-modal></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="projectModalTitle" class="modal-title">Project Details</h3>
+                <button class="modal-close" data-close-modal aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+                    
+                    <div class="form-group">
+                        <label for="projectName" class="form-label">Project Name *</label>
+                        <input 
+                            type="text" 
+                            id="projectName" 
+                            class="form-input" 
+                            required 
+                            placeholder="Enter project name"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectColor" class="form-label">Color</label>
+                        <input type="color" id="projectColor" class="form-input-color" value="#3b82f6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Default View</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="projectView" value="list" checked>
+                                <span>List</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="projectView" value="kanban">
+                                <span>Kanban</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
+        <div class="modal-overlay" data-close-modal></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 id="exportModalTitle" class="modal-title">Export Data</h3>
+                <button class="modal-close" data-close-modal aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Choose export format:</p>
+                <div class="export-buttons">
+                    <button id="exportJsonBtn" class="btn btn-primary">Export as JSON</button>
+                    <button id="exportCsvBtn" class="btn btn-primary">Export as CSV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-overlay" data-close-modal></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="helpModalTitle" class="modal-title">Keyboard Shortcuts</h3>
+                <button class="modal-close" data-close-modal aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <kbd>?</kbd>
+                        <span>Show this help</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>n</kbd>
+                        <span>New task (focus quick-add)</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>/</kbd>
+                        <span>Focus search</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Esc</kbd>
+                        <span>Close modal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden" role="alert" aria-live="polite">
+        <span id="toastMessage"></span>
+    </div>
+    
+    <!-- Script -->
+    <script src="script.js" type="module"></script>
+</body>
+</html>
