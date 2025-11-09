@@ -838,6 +838,7 @@ class UIController {
         this.modals.project = document.getElementById('projectModal');
         this.modals.export = document.getElementById('exportModal');
         this.modals.help = document.getElementById('helpModal');
+        this.modals.settings = document.getElementById('settingsModal');
         
         // Setup event listeners
         this.setupEventListeners();
@@ -885,6 +886,19 @@ class UIController {
         
         // Help
         document.getElementById('helpBtn').addEventListener('click', () => this.openModal('help'));
+        
+        // View options / Settings
+        const viewOptionsBtn = document.getElementById('viewOptionsBtn');
+        if (viewOptionsBtn) {
+            viewOptionsBtn.addEventListener('click', async () => {
+                await this.populateSettings();
+                this.openModal('settings');
+            });
+        }
+
+        // Settings form
+        const settingsForm = document.getElementById('settingsForm');
+        if (settingsForm) settingsForm.addEventListener('submit', (e) => this.saveSettings(e));
         
         // Project
         document.getElementById('newProjectBtn').addEventListener('click', () => this.openProjectModal());
@@ -1107,6 +1121,50 @@ class UIController {
     openModal(name) {
         if (this.modals[name]) {
             this.modals[name].classList.remove('hidden');
+        }
+    }
+
+    /**
+     * Populate settings form from storage
+     */
+    async populateSettings() {
+        try {
+            const data = await storage.getData();
+            const settings = data.settings || {};
+            const darkModeEl = document.getElementById('settingsDarkMode');
+            const notificationsEl = document.getElementById('settingsNotifications');
+
+            if (darkModeEl) darkModeEl.value = settings.darkMode || 'auto';
+            if (notificationsEl) notificationsEl.checked = !!settings.notifications;
+        } catch (e) {
+            console.error('Failed to load settings:', e);
+        }
+    }
+
+    /**
+     * Save settings from modal form into storage
+     * @param {Event} e
+     */
+    async saveSettings(e) {
+        e.preventDefault();
+        try {
+            const darkMode = document.getElementById('settingsDarkMode').value;
+            const notifications = document.getElementById('settingsNotifications').checked;
+
+            const data = await storage.getData();
+            data.settings = data.settings || {};
+            data.settings.darkMode = darkMode;
+            data.settings.notifications = notifications;
+            await storage.saveData(data);
+
+            // Apply theme immediately
+            if (typeof app !== 'undefined' && app.initTheme) await app.initTheme();
+
+            this.closeAllModals();
+            this.showToast('Settings saved');
+        } catch (err) {
+            console.error('Error saving settings:', err);
+            this.showToast('Failed to save settings');
         }
     }
     
