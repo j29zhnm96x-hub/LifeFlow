@@ -839,6 +839,21 @@ class UIController {
         this.modals.export = document.getElementById('exportModal');
         this.modals.help = document.getElementById('helpModal');
         this.modals.settings = document.getElementById('settingsModal');
+
+        // Bind view options (settings) button early so it's available even if other setup fails
+        try {
+            const viewOptionsBtnEarly = document.getElementById('viewOptionsBtn');
+            if (viewOptionsBtnEarly) {
+                viewOptionsBtnEarly.addEventListener('click', async () => {
+                    await this.populateSettings();
+                    this.openModal('settings');
+                });
+            } else {
+                console.warn('viewOptionsBtn not found during init');
+            }
+        } catch (e) {
+            console.error('Error binding viewOptionsBtn early:', e);
+        }
         
         // Setup event listeners
         this.setupEventListeners();
@@ -850,8 +865,9 @@ class UIController {
      * Setup event listeners
      */
     setupEventListeners() {
-        // Quick add
-        document.getElementById('quickAddBtn').addEventListener('click', () => this.quickAddTask());
+        try {
+            // Quick add
+            document.getElementById('quickAddBtn').addEventListener('click', () => this.quickAddTask());
         document.getElementById('quickAddInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.quickAddTask();
         });
@@ -915,14 +931,18 @@ class UIController {
         // Subtasks
         document.getElementById('addSubtaskBtn').addEventListener('click', () => this.addSubtaskInput());
         
-        // Tags input
-        document.getElementById('taskTags').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.addTag(e.target.value);
-                e.target.value = '';
-            }
-        });
+            // Tags input
+            document.getElementById('taskTags').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.addTag(e.target.value);
+                    e.target.value = '';
+                }
+            });
+        } catch (err) {
+            console.error('Error setting up event listeners:', err);
+            try { this.showToast('Some UI features failed to initialize (see console)'); } catch (_) {}
+        }
     }
     
     /**
