@@ -947,7 +947,7 @@ kbd {
 }
 
 .mobile-nav-icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
 }
 
 .mobile-add-icon {
@@ -1021,6 +1021,28 @@ kbd {
     
     .modal-content {
         border-radius: var(--radius);
+    }
+}
+
+/* Additional mobile tweaks for portrait small screens */
+@media (max-width: 420px) and (orientation: portrait) {
+    .mobile-nav-item {
+        padding: 0.4rem;
+    }
+
+    /* Hide labels to save horizontal space on very small devices */
+    .mobile-nav-label {
+        display: none;
+    }
+
+    .mobile-nav-icon {
+        font-size: 1.25rem;
+    }
+
+    .mobile-add-icon {
+        width: 2.6rem;
+        height: 2.6rem;
+        font-size: 1.6rem;
     }
 }
 

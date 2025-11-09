@@ -378,3 +378,40 @@ For issues, feature requests, or questions, please open an issue on GitHub.
 ---
 
 **Built with ❤️ using vanilla HTML, CSS, and JavaScript**
+
+## 🛠 Recent Changes (Mobile & PWA)
+
+This release includes a few small but important fixes to improve the mobile experience and PWA install behavior:
+
+- Mobile safe-area support: CSS now respects iOS safe-area insets so the bottom navigation and toast notifications are not obscured by the iPhone home indicator.
+- Mobile nav improvements: Added "This Week" and "This Month" buttons to the bottom navigation and tightened icon spacing for small portrait screens so items don't get clipped.
+- Settings button: Wired the view options (⚙️) button to open a Settings modal and added persistent theme/notifications preferences.
+- PWA icon handling: The provided `icons/favicon.PNG` (180x180) is now referenced as the canonical `apple-touch-icon` and included in `manifest.json` so Safari should pick the correct icon when you Add to Home Screen.
+
+## 📱 Mobile / PWA Notes & How to Verify
+
+1. Start a simple local server from the project root (recommended for PWA features):
+
+```powershell
+# from the project folder
+python -m http.server 8000
+```
+
+2. Open the app in your mobile browser (or use DevTools device emulation):
+- Confirm the bottom navigation is fully visible in portrait (iPhone 13 Pro / 390×844) and that the "This Week" and "This Month" icons are present.
+- Create a quick task to trigger a toast and confirm the toast appears above the bottom nav.
+
+3. PWA icon verification (Safari / iOS):
+- Remove any previously added LifeFlow shortcut from your home screen (iOS caches icons).
+- Open the site in Safari → Share → Add to Home Screen → Add.
+- The new Home Screen icon should use the provided `icons/favicon.PNG` (180×180).
+
+If you still see the old icon, try clearing Safari cache (Settings → Safari → Clear History and Website Data), remove the shortcut, and re-add.
+
+## ✅ Recommended follow-ups (optional)
+
+- Rename icon files to lowercase (`favicon.png`, `apple-touch-icon.png`) for case-sensitive deployments. I can do this for you if you want.
+- Provide additional icon sizes (120x120, 152x152, 167x167, 180x180) and splash screens for a polished iOS install experience—happy to add them.
+- Add a small integration test or checklist in CI to ensure PWA manifest validity and icon availability.
+
+If you'd like, I can apply any of the follow-ups above (rename files, add canonical `apple-touch-icon.png`, or generate splash assets). Tell me which and I'll implement it.
