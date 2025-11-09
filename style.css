@@ -38,6 +38,9 @@
     --spacing-xs: 0.5rem;
     
     --transition: 200ms ease;
+    /* iOS safe area fallbacks */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Dark Mode */
@@ -83,7 +86,8 @@ body {
 /* App Layout */
 .app {
     display: flex;
-    min-height: 100vh;
+    /* Prefer dynamic viewport height to avoid iOS 100vh issues */
+    min-height: 100dvh;
     position: relative;
 }
 
@@ -183,7 +187,8 @@ body {
     flex: 1;
     margin-left: 280px;
     padding: var(--spacing);
-    padding-bottom: calc(var(--spacing) + 70px); /* Space for mobile nav */
+    /* Space for mobile nav + iOS home indicator */
+    padding-bottom: calc(var(--spacing) + 70px + var(--safe-bottom));
     max-width: 1200px;
     width: 100%;
 }
@@ -881,7 +886,7 @@ kbd {
 /* Toast Notification */
 .toast {
     position: fixed;
-    bottom: calc(var(--spacing) + 70px);
+    bottom: calc(var(--spacing) + 70px + var(--safe-bottom));
     left: 50%;
     transform: translateX(-50%);
     background-color: var(--text-primary);
@@ -918,6 +923,7 @@ kbd {
     background-color: var(--bg-primary);
     border-top: 1px solid var(--border);
     padding: 0.5rem;
+    padding-bottom: calc(0.5rem + var(--safe-bottom));
     z-index: 100;
 }
 
@@ -974,7 +980,7 @@ kbd {
     
     .main-content {
         margin-left: 0;
-        padding-bottom: calc(var(--spacing) + 70px);
+        padding-bottom: calc(var(--spacing) + 70px + var(--safe-bottom));
     }
     
     .mobile-nav {
